@@ -22,9 +22,11 @@ computes a formula "a ** 5 + 0.3 * b + c". You are not allowed to implement
 your own submodules or functions for the addition, subtraction,
 multiplication, division, comparison or getting the square root of
 floating-point numbers. For such operations you can only use the modules
-from the arithmetic_block_wrappers directory. You can check the results by
-running the script "simulate". If the script outputs "FAIL" or does not
-output "PASS", your design is not working. Your design must be able to
+from the arithmetic_block_wrappers directory. You are not allowed to change
+any other files except challenge.sv. You can check the results by running
+the script "simulate". If the script outputs "FAIL" or does not output
+"PASS" from the code in the provided testbench.sv, your design is not
+working and is not an answer to the challenge. Your design must be able to
 accept the inputs (a, b and c) each clock cycle back-to-back and generate
 the computation results without any stalls and without requiring empty cycle
 gaps in the input. The solution code has to be synthesizable SystemVerilog
@@ -33,7 +35,6 @@ handshakes of the submodules. The AI has to figure this out by itself by
 analyzing the code in the repository directories. Likewise a human should
 not instruct AI how to build a pipeline structure since it makes the
 exercise meaningless.
-
 ## 2. The Credits
 
 The list of people who contributed to the SystemVerilog Homework:
