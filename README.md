@@ -12,31 +12,31 @@ documented.
 The SystemVerilog Microarchitecture Challenge for AI No.1 is based on the
 [SystemVerilog
 Homework](https://github.com/verilog-meetup/systemverilog-homework) project
-by [Verilog Meetup](https://verilog-meetup.com/). It also uses source code
-of an open-source [Wally CPU](https://github.com/openhwgroup/cvw).
+by [Verilog Meetup](https://verilog-meetup.com/). It also uses the source
+code of an open-source [Wally CPU](https://github.com/openhwgroup/cvw).
 
 ## 1. The Prompt
 
-Finish the code of a pipelined block in the file challenge.sv.
-The block computes a formula "a ** 5 + 0.3 * b + c".
-You are not allowed to implement your own sub modules or functions
-for the addition, substraction, multiplication, division,
-comparison or getting square root of floating-point numbers.
-For such operations you can only use the modules
-from arithmetic_block_wrappers directory.
-You can check the results by running the script "simulate".
-If the script outputs "FAIL" or does not output "PASS", your design
-is not working. Your design must be able to accept the inputs (a, b and c)
-and each clock cycle back-to-back and generate the computation results without
-and stalls and without requiring empty cycle gaps in the input.
-The solution code has to be synthesizable SystemVerilog RTL.
-A human should not help AI by tipping anything on latencies
-and handshakes. The AI has to figure this out by itself
-by analyzing the code in the repository directories.
+Finish the code of a pipelined block in the file challenge.sv. The block
+computes a formula "a ** 5 + 0.3 * b + c". You are not allowed to implement
+your own submodules or functions for the addition, subtraction,
+multiplication, division, comparison or getting the square root of
+floating-point numbers. For such operations you can only use the modules
+from the arithmetic_block_wrappers directory. You can check the results by
+running the script "simulate". If the script outputs "FAIL" or does not
+output "PASS", your design is not working. Your design must be able to
+accept the inputs (a, b and c) each clock cycle back-to-back and generate
+the computation results without any stalls and without requiring empty cycle
+gaps in the input. The solution code has to be synthesizable SystemVerilog
+RTL. A human should not help AI by tipping anything on latencies or
+handshakes of the submodules. The AI has to figure this out by itself by
+analyzing the code in the repository directories. Likewise a human should
+not instruct AI how to build a pipeline structure since it makes the
+exercise meaningless.
 
 ## 2. The Credits
 
-The list of the people who contributed to the SystemVerilog Homework:
+The list of people who contributed to the SystemVerilog Homework:
 
 1. [Yuri Panchul](https://github.com/yuri-panchul)
 
@@ -56,10 +56,14 @@ The list of the people who contributed to the SystemVerilog Homework:
 
 ## 3. The recommended software installation
 
-We tested the Challenge with Icarus Verilog 12.0, but you should be able to run it with other simulators, such as Synopsys VCS, Cadence Xcelium, Mentor Questa.
-However, since we did not test the Challenge under other simulators yes, we suggest checking the result using Icarus Verilog first.
-Icarus is available under Linux, MacOS and Windows, with or without Windows WSL. We also recommend using Bash, even under Windows without WSL. Git for Windows includes Bash.
-You may also need GTKWave or Surfer waveform viewer for debug. To install the necessary software, do the following:
+We tested the Challenge with Icarus Verilog 12.0, but you should be able to
+run it with other simulators, such as Synopsys VCS, Cadence Xcelium, Mentor
+Questa. However, since we did not test the Challenge under other simulators
+yet, we suggest checking the result using Icarus Verilog first. Icarus is
+available under Linux, MacOS and Windows, with or without Windows WSL. We
+also recommend using Bash, even under Windows without WSL. Git for Windows
+includes Bash. You may also need GTKWave or Surfer waveform viewer for
+debug. To install the necessary software, do the following:
 
 ### 3.1. Debian-derived Linux, Simply Linux or Windows WSL Ubuntu
 
@@ -68,9 +72,10 @@ sudo apt-get update
 sudo apt-get install git iverilog gtkwave surfer
 ```
 
-If you use other Linux distribution, google how to install Git, Icarus Verilog, GTKWave and optional Surfer.
+If you use other Linux distribution, google how to install Git, Icarus
+Verilog, GTKWave and optional Surfer.
 
-Check the version of Icarus is at least 11 and preferrably 12.
+Check the version of Icarus is at least 11 and preferably 12.
 
 ```bash
 iverilog -v
