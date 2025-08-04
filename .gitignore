@@ -1,6 +1,3 @@
-import/
-*.hex
-sim.out
-dump*.vcd
-log.txt
-lint.txt
+a.out
+dump.vcd
+simulation.log
