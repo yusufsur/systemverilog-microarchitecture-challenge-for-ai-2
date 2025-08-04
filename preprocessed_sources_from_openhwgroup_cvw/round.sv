@@ -308,8 +308,6 @@ module round (
           default:  Me = '0;
       endcase
 
-
-
   // round the result
   //      - if the fraction overflows one should be added to the exponent
   assign {FullRe, Rf} = {Me, RoundFrac} + RoundAdd;

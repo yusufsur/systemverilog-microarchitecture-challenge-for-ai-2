@@ -89,4 +89,3 @@ module fdivsqrtstage4 (
   fdivsqrtuotfc4 fdivsqrtuotfc4(.udigit, .C(CNext[  DIVb:0]), .U, .UM, .UNext, .UMNext);
 endmodule
 
-

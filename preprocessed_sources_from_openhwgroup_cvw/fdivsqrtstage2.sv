@@ -27,7 +27,6 @@
 // and limitations under the License.
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 module fdivsqrtstage2 (
   input  logic [  DIVb+3:0] D, DBar,        // Q4.DIVb
   input  logic [  DIVb:0]   U, UM,          // U1.DIVb
@@ -72,5 +71,4 @@ module fdivsqrtstage2 (
   // Unified On-The-Fly Converter to accumulate result
   fdivsqrtuotfc2 uotfc2(.up, .un, .C(CNext), .U, .UM, .UNext, .UMNext);
 endmodule
-
 

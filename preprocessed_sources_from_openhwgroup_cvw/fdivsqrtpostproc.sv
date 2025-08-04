@@ -102,18 +102,15 @@ module fdivsqrtpostproc (
     logic signed [  INTDIVb+3:0] PreResultM, PreResultShiftedM, PreIntResultM;
     logic [  INTDIVb+3:0] DTrunc, SumTrunc;
 
-
     assign SumTrunc = Sum[  DIVb+3:  DIVb-  INTDIVb];
     assign DTrunc = D[  DIVb+3:  DIVb-  INTDIVb];
 
     assign W = $signed(SumTrunc) >>>   LOGR;
     assign UnsignedQuotM = {3'b000, PreUmM[  DIVb:  DIVb-  INTDIVb]};
 
-
     // Integer remainder: sticky and sign correction muxes
     assign NegQuotM = AsM ^ BsM; // Integer Quotient is negative
     mux2 #(  INTDIVb+4) normremdmux(W, W+DTrunc, NegStickyM, NormRemDM);
-
 
     // Select quotient or remainder and do normalization shift
     mux2 #(  INTDIVb+4)    presresultmux(UnsignedQuotM, NormRemDM, RemOpM, PreResultM);
