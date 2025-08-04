@@ -1,0 +1,43 @@
+// Put any submodules you need here.
+//
+// You are not allowed to implement your own modules
+// for the addition, substraction, multiplication, division,
+// comparison or getting square root of floating-point numbers.
+//
+// For such operations you can only use the modules
+// from arithmetic_block_wrappers directory.
+
+module challenge
+(
+    input                     clk,
+    input                     rst,
+
+    input                     arg_vld,
+    input        [FLEN - 1:0] a,
+    input        [FLEN - 1:0] b,
+    input        [FLEN - 1:0] c,
+
+    output logic              res_vld,
+    output logic [FLEN - 1:0] res
+);
+
+    // The Prompt:
+    //
+    // Finish the code of a pipelined block in the file challenge.sv.
+    // The block computes a formula "a ** 5 + 0.3 * b + c".
+    // You are not allowed to implement your own sub modules or functions
+    // for the addition, substraction, multiplication, division,
+    // comparison or getting square root of floating-point numbers.
+    // For such operations you can only use the modules
+    // from arithmetic_block_wrappers directory.
+    // You can check the results by running the script "simulate".
+    // If the script outputs "FAIL" or does not output "PASS", your design
+    // is not working. Your design must be able to accept the inputs (a, b and c)
+    // and each clock cycle back-to-back and generate the computation results without
+    // and stalls and without requiring empty cycle gaps in the input.
+    // The solution code has to be synthesizable SystemVerilog RTL.
+    // A human should not help AI by tipping anything on latencies
+    // and handshakes. The AI has to figure this out by itself
+    // by analyzing the code in the repository directories.
+
+endmodule

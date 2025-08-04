@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+iverilog -g2012 \
+-I preprocessed_sources_from_openhwgroup_cvw \
+preprocessed_sources_from_openhwgroup_cvw/config.vh \
+preprocessed_sources_from_openhwgroup_cvw/*.sv \
+arithmetic_block_wrappers/*.sv \
+challenge.sv \
+testbench.sv \
+> simulation.log 2>&1
+
+vvp a.out >> simulation.log 2>&1
+
+rm -rf a.out
+
+sed -i -e '/always_comb process has no sensitivities/d' simulation.log
+sed -i -e '/A while statement cannot be synthesized in an always_comb process/d' simulation.log
+sed -i -e '/finish called/d' simulation.log
+sed -i -e '/sorry: constant selects/d' simulation.log
+
+grep -e PASS -e FAIL -e ERROR -e Error -e error -e Timeout -e ++ simulation.log \
+    | sed -e 's/PASS/\x1b[0;32m&\x1b[0m/g' -e 's/FAIL/\x1b[0;31m&\x1b[0m/g'
