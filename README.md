@@ -53,7 +53,7 @@ The list of people who contributed to the SystemVerilog Homework:
 
 7. [Konstantin Blokhin](https://github.com/kost-b)
 
-8. [PetrDynin](https://github.com/PetrDynin)
+8. [Petr Dynin](https://github.com/PetrDynin)
 
 ## 3. The recommended software installation
 

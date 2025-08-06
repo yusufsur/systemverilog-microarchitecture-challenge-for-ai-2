@@ -339,7 +339,7 @@ module testbench;
                 (
                             $bitstoreal (a) ** 5
                     + 0.3 * $bitstoreal (b)
-                    -       $bitstoreal (c)
+                    +       $bitstoreal (c)
                 );
 
                 queue.push_back (res_expected);
