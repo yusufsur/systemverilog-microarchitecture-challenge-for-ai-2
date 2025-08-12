@@ -384,6 +384,34 @@ module testbench;
         end
         else if (was_reset)
         begin
+            if (arg_rdy === 'z)
+            begin
+                $display ("FAIL %s: not connected: %s", test_id, `PB (arg_rdy));
+                fail_is_already_reported = 1;
+                $finish;
+            end
+
+            if (arg_rdy === 'x)
+            begin
+                $display ("FAIL %s: invalid: %s", test_id, `PB (arg_rdy));
+                fail_is_already_reported = 1;
+                $finish;
+            end
+
+            if (res_vld === 'z)
+            begin
+                $display ("FAIL %s: not connected: %s", test_id, `PB (res_vld));
+                fail_is_already_reported = 1;
+                $finish;
+            end
+
+            if (res_vld === 'x)
+            begin
+                $display ("FAIL %s: invalid: %s", test_id, `PB (res_vld));
+                fail_is_already_reported = 1;
+                $finish;
+            end
+
             if (arg_vld & arg_rdy)
             begin
                 res_expected = $realtobits
@@ -485,8 +513,19 @@ module testbench;
     //----------------------------------------------------------------------
 
     final
+    begin
         $display ("\n\nnumber of transfers : arg %0d res %0d per %0d cycles",
             arg_cnt, res_cnt, n_cycles);
+
+        if (arg_cnt == 0)
+            $display ("FAIL %s: %s == 0", test_id, `PD (arg_cnt));
+
+        if (res_cnt == 0)
+            $display ("FAIL %s: %s == 0", test_id, `PD (res_cnt));
+
+        if (arg_cnt != res_cnt )
+            $display ("FAIL %s: %s != %s", test_id, `PD (arg_cnt), `PD (res_cnt));
+    end
 
     //----------------------------------------------------------------------
     // Setting timeout against hangs
