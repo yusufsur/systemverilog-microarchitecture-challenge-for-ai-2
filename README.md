@@ -1,6 +1,6 @@
-# SystemVerilog Microarchitecture Challenge for AI No.1
+# SystemVerilog Microarchitecture Challenge for AI No.2. Adding the Flow Control.
 
-This repository contains a challenge to any AI software that claims to
+This repository contains a new challenge to any AI software that claims to
 generate Verilog code. The challenge is based on a very typical scenario in
 an electronic company: an engineer has to write a pipelined block using a
 library of sub-blocks written by somebody else. Then this engineer has to
@@ -9,32 +9,38 @@ need to figure out the sub-block latencies and handshakes by analyzing the
 code, since a lot of code in electronic companies is not sufficiently
 documented.
 
-The SystemVerilog Microarchitecture Challenge for AI No.1 is based on the
+The SystemVerilog Microarchitecture Challenge for AI No.2 is based on the
 [SystemVerilog
 Homework](https://github.com/verilog-meetup/systemverilog-homework) project
 by [Verilog Meetup](https://verilog-meetup.com/). It also uses the source
 code of an open-source [Wally CPU](https://github.com/openhwgroup/cvw).
 
+This challenge is a sequel to the [SystemVerilog Microarchitecture Challenge for AI No.1](https://github.com/verilog-meetup/systemverilog-microarchitecture-challenge-for-ai-1)
+which was challenging to ChatGPT 4 but became less challenging when ChatGPT 5 appeared.
+
 ## 1. The Prompt
 
 Finish the code of a pipelined block in the file challenge.sv. The block
-computes a formula "a ** 5 + 0.3 * b + c". You are not allowed to implement
-your own submodules or functions for the addition, subtraction,
-multiplication, division, comparison or getting the square root of
-floating-point numbers. For such operations you can only use the modules
-from the arithmetic_block_wrappers directory. You are not allowed to change
-any other files except challenge.sv. You can check the results by running
-the script "simulate". If the script outputs "FAIL" or does not output
-"PASS" from the code in the provided testbench.sv by running the provided
-script "simulate", your design is not working and is not an answer to the
-challenge. Your design must be able to accept a new set of the inputs (a, b
-and c) each clock cycle back-to-back and generate the computation results
-without any stalls and without requiring empty cycle gaps in the input. The
-solution code has to be synthesizable SystemVerilog RTL. A human should not
-help AI by tipping anything on latencies or handshakes of the submodules.
-The AI has to figure this out by itself by analyzing the code in the
-repository directories. Likewise a human should not instruct AI how to build
-a pipeline structure since it makes the exercise meaningless.
+computes a formula "a ** 5 + 0.3 * b - c". Ready/valid handshakes for the
+arguments and the result follow the same rules as ready/valid in AXI Stream.
+You are not allowed to implement your own submodules or functions for the
+addition, subtraction, multiplication, division, comparison or getting the
+square root of floating-point numbers. For such operations you can only use
+the modules from the arithmetic_block_wrappers directory. You are not
+allowed to change any other files except challenge.sv. You can check the
+results by running the script "simulate". If the script outputs "FAIL" or
+does not output "PASS" from the code in the provided testbench.sv by running
+the provided script "simulate", your design is not working and is not an
+answer to the challenge. Your design must be able to accept a new set of the
+inputs (a, b and c) each clock cycle back-to-back and generate the
+computation results without any stalls and without requiring empty cycle
+gaps in the input. The solution code has to be synthesizable SystemVerilog
+RTL. A human should not help AI by tipping anything on latencies or
+handshakes of the submodules. The AI has to figure this out by itself by
+analyzing the code in the repository directories. Likewise a human should
+not instruct AI how to build a pipeline structure since it makes the
+exercise meaningless.
+
 ## 2. The Credits
 
 The list of people who contributed to the SystemVerilog Homework:

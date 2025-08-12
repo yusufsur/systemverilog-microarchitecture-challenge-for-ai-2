@@ -20,16 +20,16 @@ module testbench;
     logic               rst;
 
     logic               arg_vld;
+    wire                arg_rdy;
+
     logic  [FLEN - 1:0] a;
     logic  [FLEN - 1:0] b;
     logic  [FLEN - 1:0] c;
 
     wire                res_vld;
-    wire   [FLEN - 1:0] res;
-    wire                res_negative;
-    wire                err;
+    logic               res_rdy;
 
-    wire                busy;
+    wire   [FLEN - 1:0] res;
 
     //--------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ module testbench;
     //--------------------------------------------------------------------------
     // Utilities to drive stimulus
 
-    localparam max_latency       = 16,
+    localparam max_latency       = 20,  // This is not a real dut max latency
                gap_between_tests = 100;
 
     function int randomize_gap ();
@@ -109,6 +109,10 @@ module testbench;
 
         arg_vld <= 1'b1;
         @ (posedge clk);
+
+        while (~ arg_rdy)
+            @ (posedge clk);
+
         arg_vld <= 1'b0;
 
         if (random_gap)
@@ -155,6 +159,8 @@ module testbench;
         // Init and reset
 
         arg_vld <= '0;
+        res_rdy <= '1;
+
         reset ();
 
         $display ("********** Direct testing - a single test");
@@ -199,6 +205,29 @@ module testbench;
 
         make_gap_between_tests ();
 
+        $display ("********** Fill the pipeline with a backpressure");
+
+        arg_vld <= '1;
+        res_rdy <= '0;
+
+        for (int i = 0; i < max_latency * 2; i ++)
+        begin
+            a <= $realtobits ( i );
+            b <= $realtobits ( 0 );
+            c <= $realtobits ( 0 );
+
+            @ (posedge clk);
+        end
+
+        $display ("********** Drain the pipeline");
+
+        arg_vld <= '0;
+        res_rdy <= '1;
+
+        repeat (max_latency) @ (posedge clk);
+
+        make_gap_between_tests ();
+
         $display ("********** Constraint random values back-to-back");
 
         repeat (100)
@@ -212,15 +241,26 @@ module testbench;
 
         $display ("********** Random values and random gaps");
 
-        repeat (100)
-        begin
-            a <= random_realbits ();
-            b <= random_realbits ();
-            c <= random_realbits ();
+        fork
 
-            drive_arg_vld (1); // random_gap
-        end
+            repeat (1000)
+            begin
+                a <= random_realbits ();
+                b <= random_realbits ();
+                c <= random_realbits ();
 
+                drive_arg_vld (1); // random_gap
+            end
+
+            repeat (10000)
+            begin
+                res_rdy <= $urandom ();
+                @ (posedge clk);
+            end
+
+        join_any
+
+        res_rdy <= '1;
         make_gap_between_tests ();
 
     endtask
@@ -298,13 +338,24 @@ module testbench;
             $write ("    ");
 
         if (arg_vld)
+        begin
             // Optionaly change to `PF_BITS
-            $write (" arg %s %s %s", `PG_BITS (a), `PG_BITS (b), `PG_BITS (c) );
+            $write (" arg %s %s %s",
+                `PG_BITS (a), `PG_BITS (b), `PG_BITS (c));
+
+            if (arg_rdy !== 1'b1)
+                $write (" NOT READY %s", `PB (arg_rdy));
+        end
         else
-            $write ("                                     ");
+            $write ("                                                           ");
 
         if (res_vld)
-            $write (" res %s", `PG_BITS(res) );
+        begin
+            $write ("\t%s", `PG_BITS (res));
+
+            if (res_rdy !== 1'b1)
+                $write (" NOT READY %s", `PB (res_rdy));
+        end
 
         $display;
     end
@@ -333,19 +384,19 @@ module testbench;
         end
         else if (was_reset)
         begin
-            if (arg_vld)
+            if (arg_vld & arg_rdy)
             begin
                 res_expected = $realtobits
                 (
                             $bitstoreal (a) ** 5
                     + 0.3 * $bitstoreal (b)
-                    +       $bitstoreal (c)
+                    -       $bitstoreal (c)
                 );
 
                 queue.push_back (res_expected);
             end
 
-            if (res_vld)
+            if (res_vld & res_rdy)
             begin
                 if (queue.size () == 0)
                 begin
@@ -424,10 +475,10 @@ module testbench;
         begin
             n_cycles <= n_cycles + 1'd1;
 
-            if (arg_vld)
+            if (arg_vld & arg_rdy)
                 arg_cnt <= arg_cnt + 1'd1;
 
-            if (res_vld)
+            if (res_vld & res_rdy)
                 res_cnt <= res_cnt + 1'd1;
         end
 
