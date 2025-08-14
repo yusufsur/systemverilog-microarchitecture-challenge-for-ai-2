@@ -82,7 +82,8 @@ module testbench;
     // Utilities to drive stimulus
 
     localparam max_latency       = 20,  // This is not a real dut max latency
-               gap_between_tests = 100;
+               gap_between_tests = 100,
+               many_cycles       = 1000;
 
     function int randomize_gap ();
 
@@ -210,7 +211,7 @@ module testbench;
         arg_vld <= '1;
         res_rdy <= '0;
 
-        for (int i = 0; i < max_latency * 2; i ++)
+        for (int i = 0; i < many_cycles; i ++)
         begin
             a <= $realtobits ( i );
             b <= $realtobits ( 0 );
@@ -224,13 +225,13 @@ module testbench;
         arg_vld <= '0;
         res_rdy <= '1;
 
-        repeat (max_latency) @ (posedge clk);
+        repeat (many_cycles) @ (posedge clk);
 
         make_gap_between_tests ();
 
         $display ("********** Constraint random values back-to-back");
 
-        repeat (100)
+        repeat (max_latency * 10)
         begin
             a <= $realtobits ( $urandom () / 100000.0 ) ;
             b <= $realtobits ( $urandom () / 100000.0 ) ;
@@ -243,7 +244,7 @@ module testbench;
 
         fork
 
-            repeat (1000)
+            repeat (many_cycles)
             begin
                 a <= random_realbits ();
                 b <= random_realbits ();
@@ -252,7 +253,7 @@ module testbench;
                 drive_arg_vld (1); // random_gap
             end
 
-            repeat (10000)
+            repeat (many_cycles * 10)
             begin
                 res_rdy <= $urandom ();
                 @ (posedge clk);
