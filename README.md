@@ -23,16 +23,17 @@ which was challenging to ChatGPT 4 but became less challenging when ChatGPT 5 ap
 Finish the code of a pipelined block in the file challenge.sv. The block
 computes a formula "a ** 5 + 0.3 * b - c". Ready/valid handshakes for the
 arguments and the result follow the same rules as ready/valid in AXI Stream.
-You are not allowed to implement your own submodules or functions for the
-addition, subtraction, multiplication, division, comparison or getting the
-square root of floating-point numbers. For such operations you can only use
-the modules from the arithmetic_block_wrappers directory. You are not
-allowed to change any other files except challenge.sv. You can check the
-results by running the script "simulate". If the script outputs "FAIL" or
-does not output "PASS" from the code in the provided testbench.sv by running
-the provided script "simulate", your design is not working and is not an
-answer to the challenge. Your design must be able to accept a new set of the
-inputs (a, b and c) each clock cycle back-to-back and generate the
+When a block is not busy, arg_rdy should be 1, it should not wait for
+arg_vld. You are not allowed to implement your own submodules or functions
+for the addition, subtraction, multiplication, division, comparison or
+getting the square root of floating-point numbers. For such operations you
+can only use the modules from the arithmetic_block_wrappers directory. You
+are not allowed to change any other files except challenge.sv. You can check
+the results by running the script "simulate". If the script outputs "FAIL"
+or does not output "PASS" from the code in the provided testbench.sv by
+running the provided script "simulate", your design is not working and is
+not an answer to the challenge. Your design must be able to accept a new set
+of the inputs (a, b and c) each clock cycle back-to-back and generate the
 computation results without any stalls and without requiring empty cycle
 gaps in the input. The solution code has to be synthesizable SystemVerilog
 RTL. A human should not help AI by tipping anything on latencies or
