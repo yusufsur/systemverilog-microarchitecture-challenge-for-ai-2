@@ -208,14 +208,24 @@ module testbench;
 
         $display ("********** Fill the pipeline with a backpressure");
 
+        if (arg_rdy !== 1'b1)
+        begin
+            $display ("FAIL %s: when a block is not busy, arg_rdy should be 1, it should not wait for arg_vld: %s", test_id, `PB (arg_rdy));
+            fail_is_already_reported = 1;
+            $finish;
+        end
+
         arg_vld <= '1;
         res_rdy <= '0;
 
         for (int i = 0; i < many_cycles; i ++)
         begin
-            a <= $realtobits ( i );
-            b <= $realtobits ( 0 );
-            c <= $realtobits ( 0 );
+            if (arg_rdy)
+            begin
+                a <= $realtobits ( i     );
+                b <= $realtobits ( i + 1 );
+                c <= $realtobits ( i + 2 );
+            end
 
             @ (posedge clk);
         end
@@ -432,6 +442,7 @@ module testbench;
                     $display ("FAIL %s: unexpected result %s",
                         test_id, `PG_BITS (res) );
 
+                    fail_is_already_reported = 1;
                     $finish;
                 end
                 else
@@ -465,30 +476,6 @@ module testbench;
     // verilator lint_on BLKSEQ
 
     //----------------------------------------------------------------------
-
-    final
-    begin
-        if (fail_is_already_reported)
-        begin
-            // Do nothing
-        end
-        else if (queue.size () == 0)
-        begin
-            $display ("PASS %s", test_id);
-        end
-        else
-        begin
-            $write ("FAIL %s: data is left sitting in the model queue:",
-                test_id);
-
-            for (int i = 0; i < queue.size (); i ++)
-                $write (" %h", queue [queue.size () - i - 1]);
-
-            $display;
-        end
-    end
-
-    //----------------------------------------------------------------------
     // Performance counters
 
     logic [32:0] n_cycles, arg_cnt, res_cnt;
@@ -519,13 +506,35 @@ module testbench;
             arg_cnt, res_cnt, n_cycles);
 
         if (arg_cnt == 0)
+        begin
             $display ("FAIL %s: %s == 0", test_id, `PD (arg_cnt));
-
-        if (res_cnt == 0)
+        end
+        else if (res_cnt == 0)
+        begin
             $display ("FAIL %s: %s == 0", test_id, `PD (res_cnt));
-
-        if (arg_cnt != res_cnt )
+        end
+        else if (arg_cnt != res_cnt)
+        begin
             $display ("FAIL %s: %s != %s", test_id, `PD (arg_cnt), `PD (res_cnt));
+        end
+        else if (fail_is_already_reported)
+        begin
+            // Do nothing
+        end
+        else if (queue.size () == 0)
+        begin
+            $display ("PASS %s", test_id);
+        end
+        else
+        begin
+            $write ("FAIL %s: data is left sitting in the model queue:",
+                test_id);
+
+            for (int i = 0; i < queue.size (); i ++)
+                $write (" %h", queue [queue.size () - i - 1]);
+
+            $display;
+        end
     end
 
     //----------------------------------------------------------------------
@@ -535,6 +544,7 @@ module testbench;
     begin
         repeat (TIMEOUT) @ (posedge clk);
         $display ("FAIL %s: timeout!", test_id);
+        fail_is_already_reported = 1;
         $finish;
     end
 
