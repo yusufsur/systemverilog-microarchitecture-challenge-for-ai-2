@@ -5,6 +5,7 @@ iverilog -g2012 \
 preprocessed_sources_from_openhwgroup_cvw/config.vh \
 preprocessed_sources_from_openhwgroup_cvw/*.sv \
 arithmetic_block_wrappers/*.sv \
+delay.sv \
 challenge.sv \
 testbench.sv \
 > simulation.log 2>&1
