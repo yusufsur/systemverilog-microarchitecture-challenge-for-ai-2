@@ -139,7 +139,7 @@ module challenge
   logic arg_vld_delayed;
   localparam A_DELAY_PIPE = 2;
   localparam DELAY_MULTUNITS = 2;
-  localparam A_DELAY_UNITAMOUNT; = 3;
+  localparam A_DELAY_UNITAMOUNT = 3;
   localparam A_DELAY = (DELAY_MULTUNITS*A_DELAY_UNITAMOUNT) +  A_DELAY_PIPE;
 
   assign a_todelay = arg_vld ? a : 0;
@@ -172,9 +172,9 @@ module challenge
 
   /* 0.3* B block start here*/
 
-  localparam logic [FLEN-1:0] CONST_03 = 32'h3E99999A;
-  logic 03b_valid, 03b_valid_stagepipe, busy_03b, error_03b;
-  logic [FLEN-1:0] 03b_result, 03b_result_delay, 03b_result_delay_2, 03b_result_delay_3;
+  localparam CONST_03 = 32'h3E99999A;
+  logic s03b_valid, busy_03b, error_03b;
+  logic [FLEN-1:0] s03b_result;
 
   f_mult  f_mult_inst_03xB (
             .clk(clk),
@@ -182,45 +182,45 @@ module challenge
             .a(CONST_03),
             .b(b),
             .up_valid(arg_vld),
-            .res(03b_result),
-            .down_valid(03b_valid),
+            .res(s03b_result),
+            .down_valid(s03b_valid),
             .busy(busy_03b),
             .error(error_03b)
           );
 
-  logic [FLEN-1:0] 03b_result_todelay, 03b_result_delayed;
-  logic 03b_valid_todelay, 03b_valid_delayed;
+  logic [FLEN-1:0] s03b_result_todelay, s03b_result_delayed;
+  logic s03b_valid_todelay, s03b_valid_delayed;
 
-  assign 03b_result_todelay = 03b_valid ? 03b_result : 0;
-  assign 03b_valid_todelay = 03b_valid;
+  assign s03b_result_todelay = s03b_valid ? s03b_result : 0;
+  assign s03b_valid_todelay = s03b_valid;
 
-  localparam 03B_DELAY = A_DELAY - DELAY_MULTUNITS;
+  localparam Param03B_DELAY = A_DELAY - DELAY_MULTUNITS;
 
   delay # (
-          .DLY(03B_DELAY),
+          .DLY(Param03B_DELAY),
           .DW(FLEN)
         )
         delay_inst_03bresult (
           .clk(clk),
-          .din(03b_result_todelay),
-          .dout(03b_result_delayed)
+          .din(s03b_result_todelay),
+          .dout(s03b_result_delayed)
         );
 
   delay # (
-          .DLY(03B_DELAY),
+          .DLY(Param03B_DELAY),
           .DW(FLEN)
         )
         delay_inst_03bvalid (
           .clk(clk),
-          .din(03b_valid_todelay),
-          .dout(03b_valid_delayed)
+          .din(s03b_valid_todelay),
+          .dout(s03b_valid_delayed)
         );
 
   /* 0.3* B block ends here*/
 
   /***********************************************************************************************/
-  logic [FLEN-1:0] 03b_result_2add, a5_result_2add, A5plus03B;
-  logic 03b_valid_2add, a5_valid_2add;
+  logic [FLEN-1:0] s03b_result_2add, sa5_result_2add, A5plus03B;
+  logic s03b_valid_2add, sa5_valid_2add;
   logic busy_A5plus03B, error_A5plus03B, A5plus03B_valid;
 
   always @(posedge clk or posedge rst)
@@ -231,12 +231,12 @@ module challenge
     end
     else
     begin
-      if (03b_valid_delayed && a5_valid)
+      if (s03b_valid_delayed && a5_valid)
       begin
-        a5_result_2add <= a5_result;
-        a5_valid_2add  <= a5_valid;
-        03b_result_2add <= 03b_result_delayed;
-        03b_valid_2add <= 03b_valid_delayed;
+        sa5_result_2add <= a5_result;
+        sa5_valid_2add  <= a5_valid;
+        s03b_result_2add <= s03b_result_delayed;
+        s03b_valid_2add <= s03b_valid_delayed;
       end
     end
   end
@@ -244,9 +244,9 @@ module challenge
   f_add  f_add_inst_a5_03b (
            .clk(clk),
            .rst(rst),
-           .a(a5_result_2add),
-           .b(03b_result_2add),
-           .up_valid(a5_valid_2add && 03b_valid_2add ),
+           .a(sa5_result_2add),
+           .b(s03b_result_2add),
+           .up_valid(sa5_valid_2add && s03b_valid_2add ),
            .res(A5plus03B),
            .down_valid(A5plus03B_valid),
            .busy(busy_A5plus03B),
@@ -256,7 +256,7 @@ module challenge
 
   /***********************************************************************************************/
   logic [FLEN-1:0] c_2delay, c_delayed;
-  logic arg_vld_delayed;
+  logic arg_vld_delayed_c;
 
   assign c_2delay = arg_vld ? c : 0;
   localparam DELAY_ADDUNITS = 1;
@@ -278,36 +278,38 @@ module challenge
         delay_inst_argvld (
           .clk(clk),
           .din(arg_vld),
-          .dout(arg_vld_delayed)
+          .dout(arg_vld_delayed_c)
         );
   /* C block ends here*/
   /***********************************************************************************************/
   /* Final block starts here*/
-  logic [FLEN-1:0] A5plus03B_reg, c_delayed_reg, arg_vld_delayed_reg, final_result;
-  logic final_result_valid;
+  logic [FLEN-1:0] A5plus03B_reg, c_delayed_reg, arg_vld_delayed_c_reg, final_result;
+  logic final_result_valid,A5plus03B_valid_reg;
 
-  always @(posedge clk or negedge rst) begin
+  always @(posedge clk or posedge rst) begin
     if (rst) begin
       A5plus03B_reg <= 0;
       c_delayed_reg <= 0;
     end else begin
       A5plus03B_reg <= A5plus03B;
       c_delayed_reg <= c_delayed;
-      arg_vld_delayed_reg <= arg_vld_delayed;
+      arg_vld_delayed_c_reg <= arg_vld_delayed_c;
       A5plus03B_valid_reg <= A5plus03B_valid;
     end
   end
-  f_add  f_add_inst_final (
+  f_sub  f_sub_inst_final (
            .clk(clk),
            .rst(rst),
            .a(A5plus03B_reg),
            .b(c_delayed_reg),
-           .up_valid(arg_vld_delayed_reg && A5plus03B_valid_reg ),
+           .up_valid(arg_vld_delayed_c_reg && A5plus03B_valid_reg ),
            .res(final_result),
            .down_valid(final_result_valid),
            .busy(busy_final),
            .error(error_final)
          );
   /* Final block ends here*/
-
+         assign arg_rdy = 1;
+  assign res = final_result;
+  assign res_vld = final_result_valid;
 endmodule
